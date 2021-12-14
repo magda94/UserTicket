@@ -1,11 +1,14 @@
 package com.example.userTickets.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity(name = "Users")
+@Entity(name = "User")
 @Getter @Setter
 public class User {
     @Id
@@ -18,4 +21,8 @@ public class User {
 
     @Column(name = "lastName")
     private String lastName;
+
+    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = {"user"})
+    private List<Ticket> tickets = new ArrayList<>();
 }

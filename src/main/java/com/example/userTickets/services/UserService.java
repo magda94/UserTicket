@@ -1,7 +1,9 @@
 package com.example.userTickets.services;
 
+import com.example.userTickets.entity.Ticket;
 import com.example.userTickets.entity.User;
 import com.example.userTickets.exceptions.UserNotFoundException;
+import com.example.userTickets.repository.TicketRepository;
 import com.example.userTickets.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +13,12 @@ import java.util.List;
 @Service
 public class UserService {
     private UserRepository repository;
+    private TicketRepository ticketrepository;
 
     @Autowired
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, TicketRepository ticketrepository) {
         this.repository = repository;
+        this.ticketrepository = ticketrepository;
     }
 
     public List<User> getUsers() {
@@ -23,12 +27,15 @@ public class UserService {
 
     public void addUser(User user) {
         repository.save(user);
+        addTickets(user.getTickets(), user);
     }
 
     public void updateUser(Long id, User user) {
         User foundUser = findById(id);
 
         user.setId(foundUser.getId());
+        addTickets(user.getTickets(), user);
+        deleteTicketsNotIncluded(user);
         repository.save(user);
     }
 
@@ -39,5 +46,21 @@ public class UserService {
     private User findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Cannot find user with id: " + id));
+    }
+
+    private void addTickets(List<Ticket> ticketList, User user) {
+        for (Ticket ticket: ticketList) {
+            ticket.setUser(user);
+        }
+        ticketrepository.saveAll(ticketList);
+    }
+
+    private void deleteTicketsNotIncluded(User user) {
+        List<Ticket> foundTickets = ticketrepository.findAllByUserId(user.getId());
+
+        foundTickets.removeAll(user.getTickets());
+        for(Ticket ticket: foundTickets) {
+            ticket.setUser(null);
+        }
     }
 }
