@@ -1,6 +1,5 @@
 package com.example.userTickets.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +16,9 @@ public class Ticket {
 
     @Column(name="ticketName")
     private String name;
+
+    @Column
+    private TicketStatus status;
 
     @ManyToOne (cascade = CascadeType.DETACH)
     @JoinColumn(name = "user_id")
