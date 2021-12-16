@@ -1,6 +1,7 @@
 package com.example.userTickets.services;
 
 import com.example.userTickets.entity.Ticket;
+import com.example.userTickets.entity.TicketStatus;
 import com.example.userTickets.exceptions.TicketNotFoundException;
 import com.example.userTickets.repository.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,10 @@ public class TicketService {
 
     public void deleteTicket(Long id) {
         repository.delete(findById(id));
+    }
+
+    public List<Ticket> findByStatus(TicketStatus status) {
+        return repository.findAllByStatus(status);
     }
 
     private Ticket findById(Long id) {
