@@ -15,14 +15,14 @@ public enum TicketStatus {
     private String name;
 
     private static Map<String, TicketStatus> nameToTicketMap =
-            Arrays.stream(values()).collect(Collectors.toMap(TicketStatus::getName, e->e));
+            Arrays.stream(values()).collect(Collectors.toMap(TicketStatus::getStatusName, e->e));
 
     TicketStatus(String name) {
         this.name = name;
     }
 
     @JsonValue
-    public String getName() {
+    public String getStatusName() {
         return name;
     }
 

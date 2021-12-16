@@ -2,21 +2,26 @@ package com.example.userTickets.services;
 
 import com.example.userTickets.entity.Ticket;
 import com.example.userTickets.entity.TicketStatus;
+import com.example.userTickets.entity.User;
 import com.example.userTickets.exceptions.TicketNotFoundException;
 import com.example.userTickets.repository.TicketRepository;
+import com.example.userTickets.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class TicketService {
 
     private TicketRepository repository;
+    private UserRepository userRepository;
 
     @Autowired
-    public TicketService(TicketRepository repository) {
+    public TicketService(TicketRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     public List<Ticket> getTickets() {
@@ -24,6 +29,8 @@ public class TicketService {
     }
 
     public void addTicket(Ticket ticket) {
+        if (ticket.getStatus() == null)
+            ticket.setStatus(TicketStatus.FREE);
         repository.save(ticket);
     }
 
@@ -35,6 +42,7 @@ public class TicketService {
 
     public void deleteTicket(Long id) {
         repository.delete(findById(id));
+
     }
 
     public List<Ticket> findByStatus(TicketStatus status) {

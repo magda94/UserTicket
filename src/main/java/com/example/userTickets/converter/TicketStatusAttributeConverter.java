@@ -11,7 +11,7 @@ public class TicketStatusAttributeConverter implements AttributeConverter<Ticket
     public String convertToDatabaseColumn(TicketStatus attribute) {
         if (attribute == null)
             return null;
-        return attribute.getName();
+        return attribute.getStatusName();
     }
 
     @Override

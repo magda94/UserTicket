@@ -3,6 +3,9 @@ package com.example.userTickets.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ public class User {
     @Column(name = "lastName")
     private String lastName;
 
-    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany (mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"user"})
     private List<Ticket> tickets = new ArrayList<>();
 }
