@@ -2,18 +2,19 @@ package com.example.userTickets.services;
 
 import com.example.userTickets.entity.Ticket;
 import com.example.userTickets.entity.TicketStatus;
-import com.example.userTickets.entity.User;
 import com.example.userTickets.exceptions.TicketNotFoundException;
+import com.example.userTickets.loggers.ProjectLogger;
 import com.example.userTickets.repository.TicketRepository;
 import com.example.userTickets.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
 public class TicketService {
+
+    private ProjectLogger logger = ProjectLogger.getLogger(this.getClass().getName());
 
     private TicketRepository repository;
     private UserRepository userRepository;
@@ -29,13 +30,16 @@ public class TicketService {
     }
 
     public void addTicket(Ticket ticket) {
-        if (ticket.getStatus() == null)
+        if (ticket.getStatus() == null) {
             ticket.setStatus(TicketStatus.FREE);
+            logger.debug("Set FREE status for ticket");
+        }
         repository.save(ticket);
     }
 
     public void updateTicket(Long id, Ticket ticket) {
         Ticket foundTicket = findById(id);
+        logger.debug("Found ticket {} for id {}", ticket, id);
         ticket.setId(foundTicket.getId());
         repository.save(ticket);
     }

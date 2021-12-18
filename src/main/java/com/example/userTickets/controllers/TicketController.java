@@ -2,11 +2,9 @@ package com.example.userTickets.controllers;
 
 import com.example.userTickets.entity.Ticket;
 import com.example.userTickets.entity.TicketStatus;
-import com.example.userTickets.repository.TicketRepository;
+import com.example.userTickets.loggers.ProjectLogger;
 import com.example.userTickets.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/tickets")
 public class TicketController {
+    private ProjectLogger logger = ProjectLogger.getLogger(this.getClass().getName());
 
     private TicketService service;
 
@@ -24,26 +23,33 @@ public class TicketController {
 
     @GetMapping("")
     public List<Ticket> getTickets() {
-        return service.getTickets();
+        List<Ticket> result = service.getTickets();
+        logger.info("Made request to get tickets");
+        return result;
     }
 
     @PostMapping("")
     public void addTicket(@RequestBody Ticket ticket) {
         service.addTicket(ticket);
+        logger.info("Ticket {} was added.", ticket);
     }
 
     @PutMapping("/{id}")
     public void updateTicket(@PathVariable("id")Long id, @RequestBody Ticket ticket) {
         service.updateTicket(id, ticket);
+        logger.info("Ticket {} was updated.", ticket);
     }
 
     @DeleteMapping("/{id}")
     public void deleteTicket(@PathVariable("id") Long id) {
         service.deleteTicket(id);
+        logger.info("Ticket with id {} was deleted.", id);
     }
 
     @GetMapping("/search/byStatus")
     public List<Ticket> getTicketWithStatus(@RequestParam("status") String status) {
-        return service.findByStatus(TicketStatus.getTicketStatusByName(status));
+        List<Ticket> result = service.findByStatus(TicketStatus.getTicketStatusByName(status));
+        logger.info("Made request to get all tickets with status: {}.", status);
+        return result;
     }
 }

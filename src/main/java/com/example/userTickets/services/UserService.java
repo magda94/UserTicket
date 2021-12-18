@@ -4,17 +4,19 @@ import com.example.userTickets.entity.Ticket;
 import com.example.userTickets.entity.TicketStatus;
 import com.example.userTickets.entity.User;
 import com.example.userTickets.exceptions.UserNotFoundException;
+import com.example.userTickets.loggers.ProjectLogger;
 import com.example.userTickets.repository.TicketRepository;
 import com.example.userTickets.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+    private ProjectLogger logger = ProjectLogger.getLogger(this.getClass().getName());
+
     private UserRepository repository;
     private TicketRepository ticketrepository;
 
@@ -35,7 +37,7 @@ public class UserService {
 
     public void updateUser(Long id, User user) {
         User foundUser = findById(id);
-
+        logger.debug("Found user {} for id {}", user, id);
         user.setId(foundUser.getId());
         addTickets(user.getTickets(), user);
         deleteTicketsNotIncluded(user);
@@ -55,13 +57,13 @@ public class UserService {
         for (Ticket ticket: ticketList) {
             ticket.setUser(user);
             ticket.setStatus(TicketStatus.BUSY);
+            logger.debug("Ticket {} for user {} was added", ticket, user);
         }
         ticketrepository.saveAll(ticketList);
     }
 
     private void deleteTicketsNotIncluded(User user) {
         List<Ticket> foundTickets = ticketrepository.findAllByUserId(user.getId());
-//
         List<Long> idsToRemove = findIdsToRemove(foundTickets, user.getTickets());
 
         for(Ticket ticket: foundTickets) {
@@ -69,6 +71,7 @@ public class UserService {
                 ticket.setUser(null);
                 ticket.setStatus(TicketStatus.FREE);
                 ticketrepository.save(ticket);
+                logger.debug("Ticket {} was unsubscribed.", ticket);
             }
         }
     }
@@ -78,6 +81,7 @@ public class UserService {
         List<Long> ticketToRemoveIds = getTicketsIds(foundTickets);
 
         ticketToRemoveIds.removeAll(userIds);
+        logger.debug("Computed id of tickets to unsubscribe. List of id: {}", ticketToRemoveIds);
         return ticketToRemoveIds;
     }
 
@@ -85,16 +89,5 @@ public class UserService {
         return list.stream()
                 .map(t -> t.getId())
                 .collect(Collectors.toList());
-    }
-
-    private List<Ticket> setTicketsToBusyStatus(List<Ticket> tickets) {
-        List<Ticket> result = new ArrayList<>();
-        for(Ticket ticket: tickets) {
-            ticket.setStatus(TicketStatus.BUSY);
-            ticketrepository.save(ticket);
-            result.add(ticket);
-        }
-
-        return result;
     }
 }

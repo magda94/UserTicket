@@ -1,7 +1,7 @@
 package com.example.userTickets.controllers;
 
 import com.example.userTickets.entity.User;
-import com.example.userTickets.repository.UserRepository;
+import com.example.userTickets.loggers.ProjectLogger;
 import com.example.userTickets.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +12,8 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
+    private ProjectLogger logger = ProjectLogger.getLogger(this.getClass().getName());
+
     private UserService service;
 
     @Autowired
@@ -21,21 +23,26 @@ public class UserController {
 
     @GetMapping("")
     public List<User> getUsers() {
-        return service.getUsers();
+        List<User> result = service.getUsers();
+        logger.info("Made request to get users");
+        return result;
     }
 
     @PostMapping("")
     public void addUser(@RequestBody User user) {
         service.addUser(user);
+        logger.info("User {} was added.", user);
     }
 
     @PutMapping("/{id}")
     public void updateUser(@PathVariable("id")Long id, @RequestBody User user) {
         service.updateUser(id, user);
+        logger.info("User {} was updated", user);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable("id") Long id) {
         service.deleteUser(id);
+        logger.info("User with id {} was deleted.", id);
     }
 }

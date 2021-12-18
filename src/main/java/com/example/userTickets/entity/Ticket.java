@@ -26,4 +26,9 @@ public class Ticket {
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties(value = {"tickets"})
     private User user;
+
+    @Override
+    public String toString() {
+        return String.format("Ticket: %s with id: %d", name, id);
+    }
 }

@@ -28,4 +28,9 @@ public class User {
     @OneToMany (mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnoreProperties(value = {"user"})
     private List<Ticket> tickets = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return String.format("%s %s with id: %d", name, lastName, id);
+    }
 }
