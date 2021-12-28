@@ -23,6 +23,6 @@ class UserServiceTest {
 
     @Test
     public void getUserByIdDhouldThrowExceptionWhenUserDoesNotExist() {
-        
+
     }
 }

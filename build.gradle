@@ -18,6 +18,26 @@ repositories {
 	mavenCentral()
 }
 
+task buildDocker {
+	doLast {
+		exec {
+			executable "docker"
+			args "build", "-t", "app/user_ticket", "."
+		}
+	}
+}
+
+task runDocker {
+	doLast {
+		exec {
+			executable "docker"
+			args "run", "-d", "-p", "8080:8080", "app/user_ticket"
+		}
+	}
+}
+
+runDocker.dependsOn buildDocker
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
