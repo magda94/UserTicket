@@ -1,12 +1,14 @@
 package com.example.userTickets.controllers;
 
 import com.example.userTickets.entity.User;
+import com.example.userTickets.exceptions.UserNotFoundException;
 import com.example.userTickets.loggers.ProjectLogger;
 import com.example.userTickets.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -26,6 +28,16 @@ public class UserController {
         List<User> result = service.getUsers();
         logger.info("Made request to get users");
         return result;
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable("id") Long id) {
+        try {
+            return service.getUserById(id);
+        }catch (UserNotFoundException e) {
+            logger.info("Cannot find user with id {}", id);
+            throw e;
+        }
     }
 
     @PostMapping("")

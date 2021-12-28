@@ -30,6 +30,10 @@ public class UserService {
         return repository.findAll();
     }
 
+    public User getUserById(Long id) {
+        return findById(id);
+    }
+
     public void addUser(User user) {
         repository.save(user);
         addTickets(user.getTickets(), user);

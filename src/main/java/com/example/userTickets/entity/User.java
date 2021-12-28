@@ -1,8 +1,7 @@
 package com.example.userTickets.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -13,6 +12,7 @@ import java.util.List;
 
 @Entity(name = "User")
 @Getter @Setter
+@EqualsAndHashCode
 public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

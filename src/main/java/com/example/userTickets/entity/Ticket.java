@@ -1,8 +1,7 @@
 package com.example.userTickets.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -10,6 +9,7 @@ import javax.persistence.*;
 
 @Entity(name="Ticket")
 @Getter @Setter
+@EqualsAndHashCode
 public class Ticket {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

@@ -5,7 +5,6 @@ import com.example.userTickets.entity.TicketStatus;
 import com.example.userTickets.exceptions.TicketNotFoundException;
 import com.example.userTickets.loggers.ProjectLogger;
 import com.example.userTickets.repository.TicketRepository;
-import com.example.userTickets.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,16 +16,18 @@ public class TicketService {
     private ProjectLogger logger = ProjectLogger.getLogger(this.getClass().getName());
 
     private TicketRepository repository;
-    private UserRepository userRepository;
 
     @Autowired
-    public TicketService(TicketRepository repository, UserRepository userRepository) {
+    public TicketService(TicketRepository repository) {
         this.repository = repository;
-        this.userRepository = userRepository;
     }
 
     public List<Ticket> getTickets() {
         return repository.findAll();
+    }
+
+    public Ticket getTicketById(Long id) {
+        return findById(id);
     }
 
     public void addTicket(Ticket ticket) {

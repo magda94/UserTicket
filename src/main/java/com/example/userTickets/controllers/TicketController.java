@@ -2,6 +2,7 @@ package com.example.userTickets.controllers;
 
 import com.example.userTickets.entity.Ticket;
 import com.example.userTickets.entity.TicketStatus;
+import com.example.userTickets.exceptions.TicketNotFoundException;
 import com.example.userTickets.loggers.ProjectLogger;
 import com.example.userTickets.services.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,16 @@ public class TicketController {
         List<Ticket> result = service.getTickets();
         logger.info("Made request to get tickets");
         return result;
+    }
+
+    @GetMapping("/{id}")
+    public Ticket getTicketById(@PathVariable("id") Long id) {
+        try {
+            return service.getTicketById(id);
+        } catch (TicketNotFoundException e) {
+            logger.info("Cannot find ticket with id: {}", id);
+            throw e;
+        }
     }
 
     @PostMapping("")
