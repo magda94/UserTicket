@@ -2,31 +2,27 @@ package com.example.userTickets.controllers;
 
 import com.example.userTickets.entity.User;
 import com.example.userTickets.exceptions.UserNotFoundException;
-import com.example.userTickets.loggers.ProjectLogger;
+import com.example.userTickets.kafka.MessageProducer;
 import com.example.userTickets.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
+@Slf4j
+@RequiredArgsConstructor
 public class UserController {
 
-    private ProjectLogger logger = ProjectLogger.getLogger(this.getClass().getName());
-
-    private UserService service;
-
-    @Autowired
-    public UserController(UserService service){
-        this.service = service;
-    }
+    private final UserService service;
+    private final MessageProducer messageProducer;
 
     @GetMapping("")
     public List<User> getUsers() {
         List<User> result = service.getUsers();
-        logger.info("Made request to get users");
+        log.info("Made request to get users");
         return result;
     }
 
@@ -35,7 +31,7 @@ public class UserController {
         try {
             return service.getUserById(id);
         }catch (UserNotFoundException e) {
-            logger.info("Cannot find user with id {}", id);
+            log.info("Cannot find user with id {}", id);
             throw e;
         }
     }
@@ -43,18 +39,19 @@ public class UserController {
     @PostMapping("")
     public void addUser(@RequestBody User user) {
         service.addUser(user);
-        logger.info("User {} was added.", user);
+        log.info("User {} was added.", user);
+        messageProducer.sendMessage(user.toString());
     }
 
     @PutMapping("/{id}")
     public void updateUser(@PathVariable("id")Long id, @RequestBody User user) {
         service.updateUser(id, user);
-        logger.info("User {} was updated", user);
+        log.info("User {} was updated", user);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable("id") Long id) {
         service.deleteUser(id);
-        logger.info("User with id {} was deleted.", id);
+        log.info("User with id {} was deleted.", id);
     }
 }
