@@ -3,6 +3,7 @@ package com.example.userTickets.controllers;
 import com.example.userTickets.entity.User;
 import com.example.userTickets.exceptions.UserNotFoundException;
 import com.example.userTickets.kafka.MessageProducer;
+import com.example.userTickets.kafka.message.UserMessage;
 import com.example.userTickets.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class UserController {
     public void addUser(@RequestBody User user) {
         service.addUser(user);
         log.info("User {} was added.", user);
-        messageProducer.sendMessage(user.toString());
+        messageProducer.sendMessage(new UserMessage(user, UserMessage.State.CREATED));
     }
 
     @PutMapping("/{id}")
